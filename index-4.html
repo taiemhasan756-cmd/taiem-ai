@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TAIEM</title>
+<style>
+:root{--bg:#0c0c10;--card:#15151b;--line:#2a2a34;--pur:#8b5cf6;--amb:#f5b301;--tx:#ececf1;--mut:#9494a3;--ok:#34d399;--err:#fb7185}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Bengali",sans-serif;line-height:1.5}
+body{min-height:100vh;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px calc(env(safe-area-inset-bottom,0px) + 72px)}
+main{max-width:760px;margin:0 auto}
+header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.av{width:60px;height:60px;border-radius:50%;border:2px solid var(--pur);background:var(--card) center/cover;display:grid;place-items:center;cursor:pointer;flex:none;font-size:11px;color:var(--mut);text-align:center;line-height:1.2}
+.av.has span{display:none}
+.who h1{font-size:20px;letter-spacing:1px}
+.who p{color:var(--mut);font-size:13px}
+.who a{color:var(--amb);font-size:12px;cursor:pointer;margin-right:10px}
+section{display:none}section.on{display:block}
+h2{font-size:19px;margin-bottom:2px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 4px}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--tx);padding:10px 12px;font:inherit;font-size:15px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--pur)}
+textarea{min-height:130px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:10px 16px;color:#fff;background:var(--pur);font-weight:500}
+button.g{background:none;border:1px solid var(--line);color:var(--tx)}
+button.a{background:var(--amb);color:#1a1000}
+button:disabled{opacity:.5;cursor:wait}
+.mt{margin-top:10px}
+.gate{display:none;text-align:center;padding:32px 16px;border:1px dashed var(--line);border-radius:10px;color:var(--amb)}
+.gate button{margin-top:12px}
+.lock .gate{display:block}.lock .body{display:none}
+.msg{font-size:13px;margin-top:8px;color:var(--mut)}.ok{color:var(--ok)}.er{color:var(--err)}
+.pi{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line)}.pi>div{flex:1;min-width:120px}
+.sw{display:flex;gap:5px;align-items:center;margin:0;font-size:13px;color:var(--tx)}.sw input{width:auto}
+.lead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.lead h3{font-size:16px}.lead p{font-size:13px;color:var(--mut)}
+.tag{font-size:11px;border-radius:99px;padding:2px 9px;border:1px solid var(--line);color:var(--mut);white-space:nowrap}
+.tag.h{border-color:var(--amb);color:var(--amb)}
+.code{margin-top:10px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.code pre{max-height:260px;overflow:auto;padding:12px;font-size:12px;background:#08080b;color:#d4d4de;white-space:pre-wrap;word-break:break-all}
+.code .bar{display:flex;gap:8px;padding:8px;background:var(--card);align-items:center}
+.code .bar span{color:var(--mut);font-size:12px;margin-right:auto}
+.code iframe{width:100%;height:340px;border:0;background:#fff}
+.step{display:flex;gap:10px;font-size:14px;padding:4px 0;color:var(--mut)}.step.run{color:var(--amb)}.step.done{color:var(--ok)}
+#chatlog{display:flex;flex-direction:column;gap:10px;min-height:240px;max-height:55vh;overflow:auto}
+.b{max-width:88%;padding:9px 12px;border-radius:10px;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.b.u{align-self:flex-end;background:var(--pur)}
+.b.m{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
+.b img{max-width:100%;border-radius:8px;display:block;margin-bottom:6px}
+.lb{font-size:11px;color:var(--amb);margin-bottom:2px}
+#thumb{display:none;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--mut)}#thumb img{height:44px;border-radius:6px}
+#frame{width:100%;height:62vh;border:1px solid var(--line);border-radius:8px;background:#fff;margin-top:10px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;padding:0 4px calc(env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line)}
+nav button{flex:1;background:none;padding:14px 0 12px;color:var(--mut);font-size:12px;border-radius:0;border-top:2px solid transparent;margin-top:-1px;min-width:0}
+nav button.on{color:var(--tx);border-top-color:var(--amb)}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="av" id="av" title="ছবি পরিবর্তন করুন"><span>📷<br>ছবি দিন</span></div>
+  <div class="who">
+    <h1>TAIEM</h1>
+    <p><span id="nm">Taiem Hasan</span> • CEO</p>
+    <a id="chg">ছবি আপলোড</a><a id="del" style="display:none">ছবি মুছুন</a>
+  </div>
+  <input type="file" id="pf" accept="image/*" hidden>
+</header>
+
+<section id="settings">
+  <h2>Settings</h2><p class="sub">এখানে একবার AI যোগ করলেই সব ট্যাবে কাজ করবে। Key শুধু এই ডিভাইসের localStorage-এ থাকে।</p>
+  <div class="card"><b>যোগ করা AI</b><div id="plist"></div><div class="msg">"চালু" করা সব AI Chat-এ আলাদাভাবে নিজের মতামত দেবে। "ডিফল্ট" AI Auto-Pilot ও Builder-এ কাজ করবে।</div></div>
+  <div class="card"><b>নতুন AI যোগ করুন</b>
+    <label>নাম</label><input id="pName" placeholder="যেমন: Gemini, GPT, DeepSeek">
+    <label>ধরন</label><select id="pType"><option value="gemini">Gemini</option><option value="openai">OpenAI-compatible (OpenAI, OpenRouter, Groq, DeepSeek, লোকাল...)</option><option value="anthropic">Anthropic (Claude)</option></select>
+    <div id="uWrap"><label>Base URL</label><input id="pUrl"></div>
+    <label>API Key</label><input id="pKey" type="password" autocomplete="off">
+    <label>Model</label><input id="pModel">
+    <div class="row mt"><button id="padd">যোগ করুন</button><button class="g" id="ptest">টেস্ট করুন</button></div>
+    <div class="msg" id="kmsg"></div>
+  </div>
+  <div class="card"><label style="margin-top:0">মালিকের নাম</label><input id="nameIn" value="Taiem Hasan"></div>
+</section>
+
+<section id="lead">
+  <h2>Lead Finder</h2><p class="sub">OpenStreetMap থেকে এলাকার ব্যবসা খুঁজুন (ফ্রি)।</p>
+  <div class="gate"><p>আগে Settings-এ API Key দিন</p><button data-go="settings">Settings-এ যান</button></div>
+  <div class="body">
+    <div class="card">
+      <label>এলাকা</label><input id="lArea" placeholder="যেমন: Dhanmondi, Dhaka">
+      <div class="row"><div><label>ধরন</label><select class="typeSel" id="lType"></select></div>
+      <div><label>ব্যাসার্ধ</label><select id="lRad"><option value="1500">১.৫ কিমি</option><option value="3000" selected>৩ কিমি</option><option value="6000">৬ কিমি</option></select></div></div>
+      <button class="mt" id="lGo">লিড খুঁজুন</button><div class="msg" id="lMsg"></div>
+    </div>
+    <div id="lOut"></div>
+  </div>
+</section>
+
+<section id="auto">
+  <h2>Auto-Pilot</h2><p class="sub">এলাকা ও ধরন দিন, AI লিড খুঁজে প্রতিটির জন্য ওয়েবসাইট বানাবে।</p>
+  <div class="gate"><p>আগে Settings-এ API Key দিন</p><button data-go="settings">Settings-এ যান</button></div>
+  <div class="body">
+    <div class="card">
+      <label>এলাকা</label><input id="aArea" placeholder="যেমন: Gulshan, Dhaka">
+      <div class="row"><div><label>ধরন</label><select class="typeSel" id="aType"></select></div>
+      <div><label>কতটি লিড</label><select id="aCnt"><option>1</option><option selected>3</option><option>5</option></select></div></div>
+      <button class="a mt" id="aGo">Auto-Pilot চালু করুন</button>
+      <div id="aSteps" class="mt"></div>
+    </div>
+    <div id="aOut"></div>
+  </div>
+</section>
+
+<section id="build">
+  <h2>Custom Builder</h2><p class="sub">আপনার প্ল্যান লিখুন, AI কোড বানাবে।</p>
+  <div class="gate"><p>আগে Settings-এ API Key দিন</p><button data-go="settings">Settings-এ যান</button></div>
+  <div class="body">
+    <div class="card">
+      <label>আপনার প্ল্যান</label>
+      <textarea id="bPlan" placeholder="যেমন: একটি ডার্ক থিম পোর্টফোলিও সাইট, Home, About, Projects, Contact সেকশনসহ..."></textarea>
+      <button class="mt" id="bGo">কোড তৈরি করুন</button><div class="msg" id="bMsg"></div>
+    </div>
+    <div id="bOut"></div>
+  </div>
+</section>
+
+<section id="chat">
+  <h2>Chat</h2><p class="sub">AI-এর সাথে কথা বলুন, স্ক্রিনশট দিয়ে নির্দেশ দিন।</p>
+  <div class="gate"><p>আগে Settings-এ API Key দিন</p><button data-go="settings">Settings-এ যান</button></div>
+  <div class="body">
+    <div class="card">
+      <div class="msg" id="actl" style="margin:0 0 8px"></div><div id="chatlog"><div class="b m">হ্যালো! আমি TAIEM AI। কীভাবে সাহায্য করব?</div></div>
+      <div id="thumb"><img id="thImg"><span id="thX" style="cursor:pointer;color:var(--err)">✕ বাদ দিন</span></div>
+      <div class="row mt" style="flex-wrap:nowrap">
+        <button class="g" id="attach" style="flex:none;min-width:0">ছবি</button>
+        <input id="cIn" placeholder="মেসেজ লিখুন...">
+        <button id="cGo" style="flex:none;min-width:0">পাঠান</button>
+      </div>
+      <input type="file" id="cf" accept="image/*" hidden>
+    </div>
+  </div>
+</section>
+
+<section id="web">
+  <h2>Web Viewer</h2><p class="sub">লিংক দিন, অ্যাপের ভেতরেই ওয়েবসাইট খুলবে।</p>
+  <div class="gate"><p>আগে Settings-এ API Key দিন</p><button data-go="settings">Settings-এ যান</button></div>
+  <div class="body">
+    <div class="card">
+      <div class="row" style="flex-wrap:nowrap"><input id="wUrl" placeholder="https://example.com"><button id="wGo" style="flex:none;min-width:0">খুলুন</button></div>
+      <div class="msg">কিছু সাইট নিরাপত্তার কারণে iframe-এ খোলে না। সেক্ষেত্রে নতুন ট্যাবে খুলুন।</div>
+      <button class="g mt" id="wNew">নতুন ট্যাবে খুলুন</button>
+      <iframe id="frame" sandbox="allow-scripts allow-forms allow-same-origin allow-popups" referrerpolicy="no-referrer"></iframe>
+    </div>
+  </div>
+</section>
+</main>
+<nav id="nav"></nav>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const ls={get:k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const PK='taiem_providers',DK='taiem_default',TL={gemini:'Gemini',openai:'OpenAI-compatible',anthropic:'Anthropic'};
+const provs=()=>{try{return JSON.parse(ls.get(PK))||[]}catch(e){return[]}};
+const active=()=>provs().filter(p=>p.on);
+const defP=()=>{const a=active();return a.find(p=>p.id===ls.get(DK))||a[0]};
+const getKey=()=>active().length?'1':'';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* Tabs */
+const TABS=[['settings','⚙️','Settings'],['lead','📍','Leads'],['auto','🤖','Auto-Pilot'],['build','💻','Builder'],['chat','💬','Chat'],['web','🌐','Web']];
+$('#nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}">${t[2]}</button>`).join('');
+function go(id){
+  TABS.forEach(t=>{$('#'+t[0]).classList.toggle('on',t[0]===id)});
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===id));
+  ls.set('taiem_tab',id);scrollTo(0,0);
+}
+function gate(){const has=!!getKey();TABS.slice(1).forEach(t=>$('#'+t[0]).classList.toggle('lock',!has))}
+$$('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* Profile */
+const av=$('#av');
+function showPhoto(){const p=ls.get('taiem_photo');av.style.backgroundImage=p?`url(${p})`:'';av.classList.toggle('has',!!p);$('#del').style.display=p?'inline':'none'}
+function pickPhoto(){$('#pf').click()}
+av.onclick=pickPhoto;$('#chg').onclick=pickPhoto;
+$('#del').onclick=()=>{ls.del('taiem_photo');showPhoto()};
+$('#pf').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const img=new Image();img.onload=()=>{
+    const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');
+    const s=Math.min(img.width,img.height);x.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,256,256);
+    ls.set('taiem_photo',c.toDataURL('image/jpeg',.85));showPhoto();URL.revokeObjectURL(img.src);
+  };img.src=URL.createObjectURL(f);e.target.value='';
+};
+function setName(){$('#nm').textContent=ls.get('taiem_name')||'Taiem Hasan'}
+$('#nameIn').value=ls.get('taiem_name')||'Taiem Hasan';
+$('#nameIn').oninput=e=>{ls.set('taiem_name',e.target.value.trim());setName()};
+
+/* Settings: AI providers */
+const PRE={gemini:['','gemini-2.5-flash'],openai:['https://api.openai.com/v1','gpt-4o-mini'],anthropic:['https://api.anthropic.com/v1','claude-sonnet-4-5']};
+function preset(){const t=$('#pType').value;$('#pUrl').value=PRE[t][0];$('#pModel').value=PRE[t][1];$('#uWrap').style.display=t==='gemini'?'none':'block'}
+$('#pType').onchange=preset;preset();
+function kmsg(t,c){const m=$('#kmsg');m.textContent=t;m.className='msg '+(c||'')}
+function save(a){ls.set(PK,JSON.stringify(a));renderP();gate();updAct()}
+function renderP(){
+  const a=provs(),d=defP();
+  $('#plist').innerHTML=a.length?a.map(p=>`<div class="pi"><div><b>${esc(p.name)}</b><div class="msg" style="margin:0">${esc(TL[p.type])} • ${esc(p.model)}</div></div><label class="sw"><input type="checkbox" data-on="${p.id}" ${p.on?'checked':''}>চালু</label><label class="sw"><input type="radio" name="df" data-df="${p.id}" ${d&&d.id===p.id?'checked':''}>ডিফল্ট</label><button class="g" data-rm="${p.id}">মুছুন</button></div>`).join(''):'<div class="msg">এখনও কোনো AI যোগ করা হয়নি।</div>';
+}
+$('#plist').onchange=e=>{const t=e.target,a=provs();
+  if(t.dataset.on){const p=a.find(x=>x.id===t.dataset.on);p.on=t.checked;save(a)}
+  if(t.dataset.df){ls.set(DK,t.dataset.df);renderP()}};
+$('#plist').onclick=e=>{const id=e.target.dataset.rm;if(id)save(provs().filter(p=>p.id!==id))};
+function formP(){const t=$('#pType').value;return{id:Date.now().toString(36),name:$('#pName').value.trim()||TL[t],type:t,url:$('#pUrl').value.trim(),key:$('#pKey').value.trim(),model:$('#pModel').value.trim(),on:true}}
+$('#padd').onclick=()=>{const p=formP();if(!p.key||!p.model){kmsg('API Key ও Model দিন।','er');return}
+  const a=provs();a.push(p);if(!ls.get(DK))ls.set(DK,p.id);save(a);$('#pName').value='';$('#pKey').value='';kmsg('যোগ হয়েছে।','ok')};
+$('#ptest').onclick=async()=>{const p=formP();if(!p.key||!p.model){kmsg('API Key ও Model দিন।','er');return}
+  kmsg('পরীক্ষা চলছে...');
+  try{await callAI(p,[{role:'user',text:'Reply with: OK'}]);kmsg('Key কাজ করছে।','ok')}catch(e){kmsg('❌ '+e.message,'er')}};
+
+/* Generic AI call */
+async function callAI(p,msgs,system){
+  let url,body,h={'Content-Type':'application/json'};
+  const b64=i=>i.split(',')[1];
+  if(p.type==='gemini'){
+    url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(p.model)}:generateContent`;h['x-goog-api-key']=p.key;
+    body={contents:msgs.map(m=>({role:m.role==='user'?'user':'model',parts:[...(m.img?[{inline_data:{mime_type:'image/jpeg',data:b64(m.img)}}]:[]),{text:m.text}]}))};
+    if(system)body.systemInstruction={parts:[{text:system}]};
+  }else if(p.type==='anthropic'){
+    url=(p.url||PRE.anthropic[0]).replace(/\/$/,'')+'/messages';h['x-api-key']=p.key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';
+    body={model:p.model,max_tokens:8000,messages:msgs.map(m=>({role:m.role==='user'?'user':'assistant',content:[...(m.img?[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64(m.img)}}]:[]),{type:'text',text:m.text}]}))};
+    if(system)body.system=system;
+  }else{
+    url=(p.url||PRE.openai[0]).replace(/\/$/,'')+'/chat/completions';h.Authorization='Bearer '+p.key;
+    body={model:p.model,messages:[...(system?[{role:'system',content:system}]:[]),...msgs.map(m=>({role:m.role==='user'?'user':'assistant',content:m.img?[{type:'image_url',image_url:{url:m.img}},{type:'text',text:m.text}]:m.text}))]};
+  }
+  let r;try{r=await fetch(url,{method:'POST',headers:h,body:JSON.stringify(body)})}catch(e){throw new Error('সংযোগ ব্যর্থ (নেটওয়ার্ক বা CORS ব্লক)।')}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const er=j.error;throw new Error((er&&er.message)||(typeof er==='string'?er:'')||('HTTP '+r.status))}
+  let t='';
+  if(p.type==='gemini'){const x=j.candidates&&j.candidates[0]&&j.candidates[0].content;t=x&&x.parts?x.parts.map(y=>y.text||'').join(''):''}
+  else if(p.type==='anthropic')t=(j.content||[]).map(y=>y.text||'').join('');
+  else t=j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:'';
+  if(!t)throw new Error('AI কোনো উত্তর দেয়নি।');
+  return t;
+}
+async function ask(text,system){const p=defP();if(!p)throw new Error('কোনো AI চালু নেই।');return callAI(p,[{role:'user',text}],system)}
+const CODE_SYS='You are an expert front-end developer. Output ONLY one complete, self-contained HTML file (inline CSS and vanilla JS, no external libraries, mobile responsive, modern polished design). No explanations.';
+function stripFence(t){const m=t.match(/```(?:html)?\s*([\s\S]*?)```/i);return(m?m[1]:t).trim()}
+function updAct(){$('#actl').textContent=active().length?'সক্রিয় AI: '+active().map(p=>p.name).join(', '):''}
+
+/* Code block with Copy */
+function codeBlock(title,raw){
+  const code=stripFence(raw),d=document.createElement('div');d.className='code';
+  d.innerHTML=`<pre>${esc(code)}</pre><div class="bar"><span>${esc(title)}</span><button class="g pv">Preview</button><button class="cp">Copy</button></div>`;
+  d.querySelector('.cp').onclick=async e=>{
+    const b=e.target;try{await navigator.clipboard.writeText(code)}catch(x){const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}
+    b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1600)};
+  d.querySelector('.pv').onclick=e=>{
+    const old=d.querySelector('iframe');if(old){old.remove();e.target.textContent='Preview';return}
+    const f=document.createElement('iframe');f.sandbox='allow-scripts';f.srcdoc=code;d.insertBefore(f,d.querySelector('.bar'));e.target.textContent='Preview বন্ধ'};
+  return d;
+}
+
+/* Lead Finder */
+const TYPES={Restaurant:'["amenity"="restaurant"]',Cafe:'["amenity"="cafe"]',Pharmacy:'["amenity"="pharmacy"]',Hotel:'["tourism"="hotel"]',Clinic:'["amenity"~"clinic|doctors|dentist"]',School:'["amenity"~"school|kindergarten"]',Gym:'["leisure"="fitness_centre"]',Salon:'["shop"~"hairdresser|beauty"]',Bakery:'["shop"="bakery"]',Clothing:'["shop"="clothes"]',Electronics:'["shop"="electronics"]'};
+$$('.typeSel').forEach(s=>s.innerHTML=Object.keys(TYPES).map(k=>`<option>${k}</option>`).join(''));
+async function findLeads(area,type,radius,onMsg){
+  onMsg('এলাকা খোঁজা হচ্ছে...');
+  const g=await (await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(area))).json();
+  if(!g.length)throw new Error('এলাকা পাওয়া যায়নি। নাম আরও স্পষ্ট করে লিখুন।');
+  const {lat,lon}=g[0];onMsg('ব্যবসা খোঁজা হচ্ছে...');
+  const q=`[out:json][timeout:25];nwr${TYPES[type]}(around:${radius},${lat},${lon});out center 60;`;
+  const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
+  if(!r.ok)throw new Error('Overpass সার্ভার ব্যস্ত, একটু পরে চেষ্টা করুন।');
+  const j=await r.json();
+  const list=j.elements.filter(e=>e.tags&&e.tags.name).map(e=>{const t=e.tags;return{name:t.name,type,phone:t.phone||t['contact:phone']||'',web:t.website||t['contact:website']||'',addr:[t['addr:housenumber'],t['addr:street'],t['addr:suburb'],t['addr:city']].filter(Boolean).join(', ')||area,lat:e.lat||(e.center&&e.center.lat),lon:e.lon||(e.center&&e.center.lon)}});
+  list.sort((a,b)=>(!!a.web)-(!!b.web));
+  return list;
+}
+$('#lGo').onclick=async()=>{
+  const area=$('#lArea').value.trim(),m=$('#lMsg'),out=$('#lOut');
+  if(!area){m.textContent='এলাকার নাম লিখুন।';m.className='msg er';return}
+  m.className='msg';out.innerHTML='';$('#lGo').disabled=true;
+  try{
+    const l=await findLeads(area,$('#lType').value,$('#lRad').value,t=>m.textContent=t);
+    m.textContent=l.length?`${l.length}টি লিড পাওয়া গেছে। ওয়েবসাইট নেই এমন ব্যবসা আগে দেখানো হয়েছে।`:'কোনো ব্যবসা পাওয়া যায়নি। অন্য ধরন বা বড় ব্যাসার্ধ চেষ্টা করুন।';
+    out.innerHTML=l.map(x=>`<div class="card lead"><div><h3>${esc(x.name)}</h3><p>${esc(x.type)} • ${esc(x.addr)}</p>${x.phone?`<p>📞 ${esc(x.phone)}</p>`:''}${x.lat?`<p><a style="color:var(--pur)" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${x.lat}&mlon=${x.lon}#map=18/${x.lat}/${x.lon}">ম্যাপে দেখুন</a></p>`:''}</div><span class="tag ${x.web?'':'h'}">${x.web?'ওয়েবসাইট আছে':'ওয়েবসাইট নেই'}</span></div>`).join('');
+  }catch(e){m.textContent='❌ '+e.message;m.className='msg er'}
+  $('#lGo').disabled=false;
+};
+
+/* Auto-Pilot */
+$('#aGo').onclick=async()=>{
+  const area=$('#aArea').value.trim(),type=$('#aType').value,n=+$('#aCnt').value,box=$('#aSteps'),out=$('#aOut');
+  if(!area){box.innerHTML='<div class="msg er">এলাকার নাম লিখুন।</div>';return}
+  out.innerHTML='';$('#aGo').disabled=true;
+  const step=(t,c)=>{box.innerHTML+=`<div class="step ${c||''}">${c==='done'?'✅':c==='run'?'⏳':'•'} ${esc(t)}</div>`};
+  box.innerHTML='';
+  try{
+    step('লিড খোঁজা হচ্ছে...','run');
+    const leads=(await findLeads(area,type,3000,()=>{})).slice(0,n);
+    box.innerHTML='';
+    if(!leads.length)throw new Error('কোনো লিড পাওয়া যায়নি।');
+    step(`${leads.length}টি লিড পাওয়া গেছে`,'done');
+    for(const l of leads){
+      step(`${l.name}-এর ওয়েবসাইট তৈরি হচ্ছে...`,'run');
+      try{
+        const prompt=`Build a professional one-page website for this local business.\nName: ${l.name}\nCategory: ${l.type}\nAddress: ${l.addr}\nPhone: ${l.phone||'not available'}\nInclude hero, about, services/menu, contact section and a call button. Use realistic placeholder copy.`;
+        const txt=await ask(prompt,CODE_SYS);
+        const c=document.createElement('div');c.className='card';
+        c.innerHTML=`<h3>${esc(l.name)}</h3><p class="sub" style="margin:0">${esc(l.type)} • ${esc(l.addr)}</p>`;
+        c.appendChild(codeBlock(l.name+'.html',txt));out.appendChild(c);
+        box.lastChild.className='step done';box.lastChild.textContent='✅ '+l.name+' সম্পন্ন';
+      }catch(e){box.lastChild.className='step';box.lastChild.innerHTML='❌ '+esc(l.name)+': '+esc(e.message)}
+    }
+    step('Auto-Pilot শেষ','done');
+  }catch(e){box.innerHTML=`<div class="msg er">❌ ${esc(e.message)}</div>`}
+  $('#aGo').disabled=false;
+};
+
+/* Custom Builder */
+$('#bGo').onclick=async()=>{
+  const plan=$('#bPlan').value.trim(),m=$('#bMsg');
+  if(!plan){m.textContent='আগে প্ল্যান লিখুন।';m.className='msg er';return}
+  m.textContent='AI কোড লিখছে...';m.className='msg';$('#bGo').disabled=true;
+  try{
+    const txt=await ask(plan,CODE_SYS);
+    $('#bOut').innerHTML='';$('#bOut').appendChild(codeBlock('custom-build.html',txt));m.textContent='✅ সম্পন্ন';m.className='msg ok';
+  }catch(e){m.textContent='❌ '+e.message;m.className='msg er'}
+  $('#bGo').disabled=false;
+};
+
+/* Chat: every active AI answers separately */
+let hists={},img=null;
+const log=$('#chatlog');
+const CHAT_SYS="You are one of several AI assistants in a group chat with CEO Taiem Hasan. Give your own independent, concise opinion. Reply in the user's language (Bengali by default). If a screenshot is given, follow the instructions in it.";
+function bubble(cls,text,src,label){const d=document.createElement('div');d.className='b '+cls;
+  if(label){const l=document.createElement('div');l.className='lb';l.textContent=label;d.appendChild(l)}
+  if(src){const i=document.createElement('img');i.src=src;d.appendChild(i)}
+  const t=document.createElement('div');t.textContent=text;d.appendChild(t);log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+$('#attach').onclick=()=>$('#cf').click();
+$('#cf').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.85);$('#thImg').src=img;$('#thumb').style.display='flex'};im.src=r.result};
+  r.readAsDataURL(f);e.target.value='';
+};
+$('#thX').onclick=()=>{img=null;$('#thumb').style.display='none'};
+async function send(){
+  const text=$('#cIn').value.trim();if(!text&&!img)return;
+  const ps=active();if(!ps.length){bubble('m','Settings-এ অন্তত একটি AI চালু করুন।');return}
+  const m={role:'user',text:text||'এই ছবিটি দেখে বিশ্লেষণ করো।',img};
+  bubble('u',text,img);img=null;$('#thumb').style.display='none';$('#cIn').value='';$('#cGo').disabled=true;
+  await Promise.all(ps.map(async p=>{
+    const h=hists[p.id]=hists[p.id]||[];h.push(m);
+    const w=bubble('m','...',null,p.name);
+    try{const a=await callAI(p,h.slice(-12),CHAT_SYS);w.lastChild.textContent=a;h.push({role:'model',text:a})}
+    catch(e){w.lastChild.textContent='❌ '+e.message;h.pop()}
+    log.scrollTop=log.scrollHeight;
+  }));
+  $('#cGo').disabled=false;
+}
+$('#cGo').onclick=send;$('#cIn').onkeydown=e=>{if(e.key==='Enter')send()};
+
+/* Web Viewer */
+function normUrl(){let u=$('#wUrl').value.trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;return u}
+$('#wGo').onclick=()=>{const u=normUrl();if(u)$('#frame').src=u};
+$('#wUrl').onkeydown=e=>{if(e.key==='Enter')$('#wGo').click()};
+$('#wNew').onclick=()=>{const u=normUrl();if(u)window.open(u,'_blank','noopener')};
+
+/* Init */
+showPhoto();setName();renderP();gate();updAct();
+go(getKey()?(ls.get('taiem_tab')||'settings'):'settings');
+})();
+</script>
+</body>
+</html>
